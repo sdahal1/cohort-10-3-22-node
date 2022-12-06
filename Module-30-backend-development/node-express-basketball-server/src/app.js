@@ -68,9 +68,18 @@ const getAllTeams = (req,res,next)=>{
     }
 }
 
+function validateCityLength(req,res,next){
+    const {cityName} = req.params;
+    if(cityName.length < 2){
+        return next("City name is too short. Try an actual city maybe?");
+    }
+    next();
+}
+
 //app.use just tells express app which functions to use in what order. You will want the function that returns a response to the client to be the latter of the two
 app.use(morgan("dev"));
 app.use(middlewareCheckAccountCredentials);
+
 
 
 
@@ -80,6 +89,39 @@ app.use(middlewareCheckAccountCredentials);
 app.get("/", sayHello)
 
 app.get("/teams",getAllTeams)
+
+app.get(
+    "/cities/:cityName", 
+    validateCityLength, 
+    (req,res,next)=>{
+        //tells us if the cityName is a city in our data set
+        const {cityName} = req.params;
+        if(cityName.length < 2){
+            return next("City name is too short. Try an actual city maybe?");
+        }
+        let doesCityExist = teams.some((team)=>team.city === cityName);
+        if(doesCityExist){
+            res.send("The city has a team!")
+        }else{
+            res.send("No teams found with that city name")
+        }
+})
+
+
+app.get(
+    "/teams/city/:cityName", 
+    validateCityLength, 
+    (req,res,next)=>{
+        console.log("here")
+        const {cityName} = req.params;
+        if(cityName.length < 2){
+            next("City name is too short. Try an actual city maybe?");
+        }else{
+            //show all teams from a given city
+            let teamsFromCity = teams.filter(team=>team.city === cityName);
+            res.json({data: teamsFromCity})
+        }
+})
 
 app.get("/teams/:id",(req,res,next)=>{
     const {id} = req.params;
