@@ -1,13 +1,14 @@
 const express = require("express");
 const app = express();
-const teams = require("./data/teams-data")
-const arenas = require("./data/arena-data")
+const teams = require("./data/teams-data");
+const arenas = require("./data/arena-data");
+
 
 
 app.use(express.json()) //this lets teh app be able to read the body json data from postman
 
 
-// TODO: Follow instructions in the checkpoint to implement ths API.
+// // TODO: Follow instructions in the checkpoint to implement ths API.
 app.get("/teams", (req,res,next)=>{
   res.json({data:teams})
 })
