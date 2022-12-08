@@ -6,6 +6,7 @@ const arenas = require("./data/arena-data")
 
 app.use(express.json()) //this lets teh app be able to read the body json data from postman
 
+
 // TODO: Follow instructions in the checkpoint to implement ths API.
 app.get("/teams", (req,res,next)=>{
   res.json({data:teams})
@@ -19,35 +20,48 @@ app.get("/teams/:teamId", (req,res,next)=>{
     res.json({data: foundTeam})
   }else{
     // next(`Team id not found: ${teamId}`)
-    res.status(400).send(`Team Id: ${teamId} not found`);
+    next({status: 404, message: `Team Id: ${teamId} not found`})
   }
 })
 
-// //make a route to handle post requests to this url: /teams
-app.post('/teams', (req,res,next)=>{
+
+function validateTeamData(req,res,next){
   //post data in the body of the post request from postman is represented by req.body
   const {data:{name, city, state, players}={}} = req.body;
-
-  if(name){
-    //generate a new unique id and make an object with the new team data from postman (req.body) with the new id embedded
-    let newId = teams.length+1;
-  
-    //create an object to store into our teams data set-> this object will contain the body from the request ()
-    let newTeam = {
-      id:newId,
-      name, 
-      city, 
-      state, 
-      players
-    }
-  
-    // console.log(newTeam);
-    //add newly created objec to our dataset
-    teams.push(newTeam);
-    res.status(201).json({data: newTeam});
-  }else{
-    res.status(400).send("Missing the name")
+  const validcities = ["New York City", "Boston", "Miami", "San Diego"];
+  if(!name || name.length<2){
+    // res.status(400).send("Missing the name");
+    return next({status: 400, message:"Missing the name property"})
   }
+  if(!city || !validcities.includes(city)){
+    return next({status: 400, message: "City not valid"});
+  }
+
+  next()
+
+
+}
+
+// //make a route to handle post requests to this url: /teams
+app.post('/teams', validateTeamData, (req,res,next)=>{
+  //post data in the body of the post request from postman is represented by req.body
+  const {data:{name, city, state, players}={}} = req.body;
+  //generate a new unique id and make an object with the new team data from postman (req.body) with the new id embedded
+  let newId = teams.length+1;
+
+  //create an object to store into our teams data set-> this object will contain the body from the request ()
+  let newTeam = {
+    id:newId,
+    name, 
+    city, 
+    state, 
+    players
+  }
+
+  // console.log(newTeam);
+  //add newly created objec to our dataset
+  teams.push(newTeam);
+  res.status(201).json({data: newTeam});
 })
 
 
@@ -76,14 +90,20 @@ app.get("/arenas/:cityName", (req,res,next)=>{
 
 
 // Not found handler
-app.use((request, response, next) => {
-  next(`Not found: ${request.originalUrl}`);
+app.use((req, res, next) => {
+  next({status: 404, message:`Not found: ${req.originalUrl}`});
 });
 
+
 // Error handler
-app.use((error, request, response, next) => {
+app.use((error, req, res, next) => {
   console.error(error);
-  response.send(error);
+ 
+  //if error has not status property, thend default it to 500
+  //if error has no message property, then default message to "something went wrong..."
+  const { status=500,message="Something went wrong" } = error;
+  // response.statusCode(error.status)
+  res.status(status).send(message)
 });
 
 module.exports = app;
