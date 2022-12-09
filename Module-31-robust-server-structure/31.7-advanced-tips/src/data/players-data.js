@@ -30,7 +30,7 @@ module.exports = [
         pointsPerGame: 27.8
     },
     {
-        id:6,
+        id: 6,
         teamId: 1,
         name: "Anthony Davis",
         pointsPerGame: 26.0

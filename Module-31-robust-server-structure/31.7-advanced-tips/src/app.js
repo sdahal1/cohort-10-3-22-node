@@ -4,6 +4,8 @@ const teams = require("./data/teams-data");
 const arenas = require("./data/arena-data");
 const teamsRouter = require("./teams/teams.router");
 const arenasRouter = require("./arenas/arenas.router");
+const playersRouter = require("./players/players.router");
+
 
 
 
@@ -11,6 +13,8 @@ app.use(express.json()) //this lets teh app be able to read the body json data f
 
 app.use("/teams", teamsRouter);
 app.use("/arenas", arenasRouter);
+app.use("/players", playersRouter);
+
 
 
 
