@@ -1,7 +1,17 @@
 const players = require("../data/players-data")
+const teams = require("../data/teams-data")
 
 function list(req,res,next){
-    res.json({data:players})
+    const {teamId} = req.params;
+    console.log(teamId) //teamId will either be undefined or a number. 
+    //It will be undefined if we request localhost:5000/players
+    //it will be a number if we request localhost:5000/teams/4/players
+    if(!teamId){
+      res.json({data:players})
+    }else{
+      let playersBelongingToCertainTeam = players.filter(player=>player.teamId === Number(teamId));
+      res.json({data:playersBelongingToCertainTeam})
+    }
 }
 
 function findPlayer(req,res,next){
@@ -21,11 +31,20 @@ function findPlayer(req,res,next){
 }
 
 function read(req,res,next){
-    const {playerId} = req.params;
+    const {playerId, teamId} = req.params;
     const {foundPlayer} = res.locals;
     //find the team in players whose id is teamId
     // let foundPlayer = players.find(team=>team.id===Number(teamId));
-    res.json({data: foundPlayer})
+
+    //if teamid is not in the rout parameter, then show the founnd player OR if the teamid is in the route parameter and that foundPLayers's teamid (found players team) matches the teamid from the route parameter
+    if(!teamId || teamId && foundPlayer.teamId === Number(teamId)){
+      res.json({data: foundPlayer})
+    }else{
+      return next({status: 404, message: `Player Id: ${playerId} not found for the team with this team Id: ${teamId}`});
+    }
+    //foundPlayers team id must equal to the team id from the route
+    
+
 }
 
 

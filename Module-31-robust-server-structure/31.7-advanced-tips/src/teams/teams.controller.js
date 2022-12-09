@@ -122,6 +122,7 @@ module.exports = {
       validateCity,
       update
     ],
-    delete: [findTeam,destroy]
+    delete: [findTeam,destroy],
+    findTeam
 
 }

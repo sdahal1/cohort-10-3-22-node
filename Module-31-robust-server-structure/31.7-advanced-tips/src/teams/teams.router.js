@@ -1,11 +1,16 @@
 //this is a tool that allows us to do more sophisticated routing
 const router = require("express").Router();
-const methodNotAllowed = require("../errors/methodNotAllowed");
-
-
-
 //router needs to know which controller functions to forward requrest for specific routes to
 const teamsController = require("./teams.controller");
+const methodNotAllowed = require("../errors/methodNotAllowed");
+
+//nested routing-> forward all routes /:teamId/players to the players router
+const playersRouter = require("../players/players.router");
+router.use("/:teamId/players", teamsController.findTeam, playersRouter);
+
+
+//end nested routing
+
 
 // already assumes routes have /teams
 

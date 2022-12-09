@@ -1,5 +1,6 @@
 //this is a tool that allows us to do more sophisticated routing
-const router = require("express").Router();
+
+const router = require("express").Router({ mergeParams: true });
 const methodNotAllowed = require("../errors/methodNotAllowed");
 
 //router needs to know which controller functions to forward requrest for specific routes to

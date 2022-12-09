@@ -7,7 +7,7 @@ module.exports = [
     },
     {
         id:2,
-        teamId: 4,
+        teamId: 5,
         name: "Luka Doncic",
         pointsPerGame: 34.5
     },
